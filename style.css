@@ -10,9 +10,9 @@ body {
 
 #intro {
   max-width: 90ch;
-  font-size: 5rem;
+  font-size: 4.5rem;
   line-height: 1.8;
-  text-align: left;
+  text-align: justified;
   word-break: break-word;
   white-space: normal;
 }
@@ -37,6 +37,7 @@ body {
 .link:hover {
   text-decoration: underline;
 }
+
 
 
 
