@@ -27,19 +27,13 @@ body {
   50% { opacity: 0; }
 }
 
-.link {
-  color: #00aaff;
-  cursor: pointer;
-  text-decoration: none;
-  font-weight: 700;
+/* === Parallax plane movement === */
+#scene {
+  transition: transform 0.15s ease-out;
+  will-change: transform;
 }
 
-.link:hover {
-  text-decoration: underline;
+/* Optional: prevent scrollbars during movement */
+body {
+  overflow: hidden;
 }
-
-
-
-
-
-
