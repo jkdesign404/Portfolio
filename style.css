@@ -43,3 +43,27 @@ body {
 @keyframes blink {
   50% { opacity: 0; }
 }
+/* Inline text links (Portfolio, Contact, About Me) */
+.inline-link {
+  color: #0077ff;
+  text-decoration: none;
+  position: relative;
+  font-weight: 700;
+}
+
+.inline-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 0.3em;
+  background-color: #0077ff;
+  z-index: -1;
+  transition: width 0.3s ease;
+}
+
+.inline-link:hover::after {
+  width: 100%;
+}
+
