@@ -10,7 +10,7 @@ body {
 
 #intro {
   max-width: 90ch;
-  font-size: 1.4rem;
+  font-size: 2.4rem;
   line-height: 1.8;
   text-align: left;
   word-break: break-word;
@@ -37,3 +37,4 @@ body {
 .link:hover {
   text-decoration: underline;
 }
+
