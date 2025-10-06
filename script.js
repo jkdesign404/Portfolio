@@ -1,36 +1,12 @@
-body {
-  background-color: #fafafa;
-  color: #000000;
-  font-family: 'aktiv grotesk', sans-serif;
-  margin: 0;
-  padding: 40px;
-  height: 100vh;
-}
-
-#intro {
-  max-width: 700px;
-  font-size: 1.6rem;
-  line-height: 1;
-  text-align: left; 
-  font-weight: 700;
-}
-
-#cursor {
-  display: inline-block;
-  color: #00aaff;
-  animation: blink 0.8s infinite;
-}
-
-@keyframes blink {
-  50% { opacity: 0; }
-}
-
-.link {
-  color: #00aaff;
-  cursor: pointer;
-  text-decoration: none;
-  font-weight: 700;
-}
-
-.link:hover {
-  text-decoration: underline;
+document.addEventListener("DOMContentLoaded", function() {
+  const typed = new Typed('#typed-text', {
+    strings: [
+      "Creative. Detail-oriented. Innovative. Dynamic. Precise. Balanced. User-focused. Immersive. Adaptive. Functionality. Typographic. Modular. Accessible. Interactive. Print-ready. Screen-optimized. <a href='#portfolio' class='link'>Portfolio</a>. Design. Engaging. Clean. Modern. Impactful. Engaging. Purposeful. Cohesive. Dynamic. Visually compelling. Experimental. Striking. Balanced. Refined. Structured. Expressive. Polished. Strategic. Concept-driven. Bold. Sleek. Minimalistic. User-focused. Innovative. <a href='#about' class='link'>About Me</a>. Jack Kelly. Immersive. Adaptive. Harmonious. Detailed. Sharp. Aesthetic. High-quality. Professional. Timeless. Functional. Immersive. Memorable. Dedicated. Adaptable. Expressive. Ambitious. Observant. Analytical. Precise. Experimental. Dynamic. Strategic. Collaborative. Resourceful. Methodical. Intuitive. Bold. Meticulous. Intentional. Versatile. Conceptual. <a href='#contact' class='link'>Contact</a>."
+    ],
+    typeSpeed: 40,
+    backSpeed: 0,
+    showCursor: true,
+    cursorChar: '|',
+    html: true
+  });
+});
