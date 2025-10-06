@@ -9,22 +9,33 @@
 <body>
   <div id="scene">
     <div id="intro">
-      <span id="typed-text">
-        Hello. I am Jack Kelly. I am a designer based in Western North Carolina.
-        I specialize in Branding and Packaging.
-        To see some of my work visit my 
-        <a href="portfolio.html" class="inline-link">Portfolio</a>.
-        If you’re interested in my work or just want to connect,
-        <a href="contact.html" class="inline-link">Contact</a> me.
-        You can learn more 
-        <a href="about.html" class="inline-link">About Me</a>
-        and my skillsets as well.
-      </span>
-      <span id="cursor">|</span>
+      <span id="typed-text"></span><span id="cursor">|</span>
     </div>
   </div>
 
-  <!-- Parallax motion -->
+  <!-- Typed.js -->
+  <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+
+  <script>
+    // Typing effect with clickable links
+    var typed = new Typed("#typed-text", {
+      strings: [
+        `Hello. I am Jack Kelly. I am a designer based in Western North Carolina. 
+        I specialize in Branding and Packaging. 
+        To see some of my work visit my <a href='portfolio.html' class='inline-link'>Portfolio</a>. 
+        If you’re interested in my work or just want to connect, 
+        <a href='contact.html' class='inline-link'>Contact</a> me. 
+        You can learn more <a href='about.html' class='inline-link'>About Me</a> and my skillsets as well.`
+      ],
+      typeSpeed: 20,
+      backSpeed: 0,
+      showCursor: true,
+      cursorChar: "|",
+      contentType: "html"
+    });
+  </script>
+
+  <!-- Smooth 2D parallax -->
   <script>
     const scene = document.getElementById("scene");
 
