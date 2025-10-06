@@ -1,6 +1,6 @@
 body {
-  background-color: #0f0f0f;
-  color: #ffffff;
+  background-color: #FAFAFA;
+  color: #242A38;
   font-family: "Aktiv Grotesk", sans-serif;
   font-weight: 700;
   margin: 0;
@@ -37,4 +37,5 @@ body {
 .link:hover {
   text-decoration: underline;
 }
+
 
