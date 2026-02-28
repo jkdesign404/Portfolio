@@ -1,30 +1,283 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Jack Kelly — Portfolio</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jack Kelly</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
+  :root { --bg:#EAEAEA; --ink:#1a1a1a; --mid:#999; --blue:#0000ff; --orange:#f6632b; }
+  body { background:var(--bg); width:100vw; height:100vh; overflow:hidden; }
+
+  .cursor {
+    width:8px; height:8px; background:var(--ink); border-radius:50%;
+    position:fixed; pointer-events:none; z-index:9999;
+    transform:translate(-50%,-50%);
+    transition:width .15s, height .15s, background .15s;
+  }
+  .cursor.hover { width:24px; height:24px; background:var(--blue); opacity:0.3; }
+
+  #layoutSVG { position:fixed; inset:0; width:100%; height:100%; }
+
+  .node-group { cursor:grab; }
+  .node-group:active { cursor:grabbing; }
+
+  #panel {
+    position:fixed; top:0; right:-480px; width:380px; height:100vh;
+    background:var(--bg); border-left:1px solid #ccc;
+    z-index:500; padding:52px 32px 40px;
+    transition:right 0.5s cubic-bezier(0.16,1,0.3,1); overflow-y:auto;
+  }
+  #panel.open { right:0; }
+  .panel-close { position:absolute; top:20px; right:20px; font-family:'Inter',sans-serif; font-weight:300; font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--mid); cursor:pointer; }
+  .panel-close:hover { color:var(--ink); }
+  .panel-label { font-family:'Inter',sans-serif; font-weight:300; font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:var(--mid); margin-bottom:12px; }
+  .panel-title { font-family:'Cormorant Garamond','Glacier',Georgia,serif; font-size:42px; line-height:1; margin-bottom:24px; color:var(--ink); }
+  .panel-title em { font-style:italic; color:var(--blue); }
+  .panel-body { font-family:'Inter',sans-serif; font-weight:300; color:var(--mid); font-size:12px; line-height:2; margin-bottom:24px; }
+  .panel-body strong { color:var(--ink); font-weight:300; }
+  .panel-divider { border:none; border-top:1px solid #ccc; margin:18px 0; }
+  .panel-row { display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #ddd; font-size:11px; }
+  .panel-row:first-of-type { border-top:1px solid #ddd; }
+  .panel-row-label { font-weight:300; color:var(--mid); letter-spacing:.1em; text-transform:uppercase; font-size:10px; }
+  .panel-row-value { font-weight:200; color:var(--ink); }
+  .panel-row-value a { color:var(--ink); text-decoration:none; }
+  .panel-row-value a:hover { color:var(--blue); }
+  .form-group { margin-bottom:16px; }
+  .form-label { display:block; font-size:10px; letter-spacing:.15em; text-transform:uppercase; color:var(--mid); margin-bottom:5px; font-weight:300; }
+  .form-input,.form-textarea { width:100%; background:transparent; border:none; border-bottom:1px solid #ccc; padding:7px 0; font-family:'Inter',sans-serif; font-weight:200; font-size:12px; color:var(--ink); outline:none; resize:none; }
+  .form-input:focus,.form-textarea:focus { border-bottom-color:var(--blue); }
+  .form-textarea { min-height:72px; }
+  .btn { padding:10px 20px; font-family:'Inter',sans-serif; font-weight:300; font-size:10px; letter-spacing:.14em; text-transform:uppercase; border:none; background:var(--ink); color:var(--bg); cursor:none; margin-top:6px; }
+  .btn:hover { background:var(--blue); }
+  .tag-list { display:flex; flex-direction:column; margin-top:4px; }
+  .tag-item { padding:11px 0; border-bottom:1px solid #ddd; font-size:11px; font-weight:200; display:flex; justify-content:space-between; align-items:center; }
+  .tag-item:first-child { border-top:1px solid #ddd; }
+  .tag-dot { width:4px; height:4px; background:var(--blue); border-radius:50%; flex-shrink:0; }
+</style>
 </head>
 <body>
-  <div id="scene">
-    <div id="intro">
-      <span id="typed-text"></span>
-    </div>
-  </div>
 
-  <!-- Typed.js -->
-  <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
-  <script src="script.js"></script> <!-- your external JS file -->
+<div class="cursor" id="cursor"></div>
 
-  <!-- Smooth 2D parallax -->
-  <script>
-    const scene = document.getElementById("scene");
-    document.addEventListener("mousemove", (e) => {
-      const moveX = (e.clientX - window.innerWidth / 2) * 0.02;
-      const moveY = (e.clientY - window.innerHeight / 2) * 0.02;
-      scene.style.transform = `translate(${moveX}px, ${moveY}px)`;
+<svg id="layoutSVG" viewBox="-597 -485 2042 1779" preserveAspectRatio="xMidYMid meet"
+  xmlns="http://www.w3.org/2000/svg"
+  style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;">
+
+  <g id="linesLayer"></g>
+  <g id="labelsLayer"></g>
+
+  <!-- Labels rendered by JS, not static -->
+
+  <g id="nodesLayer"></g>
+</svg>
+
+<div id="panel">
+  <div class="panel-close" onclick="closePanel()">✕ Close</div>
+  <div id="panelContent"></div>
+</div>
+
+<script>
+const cursorEl = document.getElementById('cursor');
+document.addEventListener('mousemove', e => {
+  cursorEl.style.left = e.clientX + 'px';
+  cursorEl.style.top  = e.clientY + 'px';
+});
+
+const NS = 'http://www.w3.org/2000/svg';
+const VB = { x:-597, y:-485, w:2042, h:1779 };
+
+function screenToSVG(px, py) {
+  const svg  = document.getElementById('layoutSVG');
+  const rect = svg.getBoundingClientRect();
+  const scale = Math.min(rect.width / VB.w, rect.height / VB.h);
+  const ox = (rect.width  - VB.w * scale) / 2;
+  const oy = (rect.height - VB.h * scale) / 2;
+  return {
+    x: (px - rect.left - ox) / scale + VB.x,
+    y: (py - rect.top  - oy) / scale + VB.y
+  };
+}
+
+// Node rest positions + runtime state
+const nodes = {
+  center:   { ox:424, oy:405, shape:'starburst', dx:0, dy:0, vx:0, vy:0, labels:[{t:'Jack Kelly', ox:-66, oy:105, size:36, fill:'#1a1a1a', font:'Inter'},{t:'est. 2004', ox:-59, oy:138, size:28, fill:'#616161', font:'Glacier'}] },
+  contact:  { ox:730, oy:338, shape:'triangle',  dx:0, dy:0, vx:0, vy:0, labels:[{t:'Contact',   ox:-18, oy:-30, size:26, fill:'#616161'}] },
+  about:    { ox:78,  oy:540, shape:'triangle',  dx:0, dy:0, vx:0, vy:0, labels:[{t:'About',     ox:-18, oy:-30, size:26, fill:'#616161'}] },
+  branding: { ox:905, oy:588, shape:'diamond',   dx:0, dy:0, vx:0, vy:0, labels:[{t:'Branding',  ox:-75, oy:-28, size:26, fill:'#616161'}] },
+  signage:  { ox:363, oy:779, shape:'diamond',   dx:0, dy:0, vx:0, vy:0, labels:[{t:'Signage',   ox:-69, oy:-28, size:26, fill:'#616161'}] },
+  uiux:     { ox:603, oy:18,  shape:'diamond',   dx:0, dy:0, vx:0, vy:0, labels:[{t:'UI / UX',   ox:-31, oy:50,  size:26, fill:'#616161'}] },
+  print:    { ox:35,  oy:270, shape:'diamond',   dx:0, dy:0, vx:0, vy:0, labels:[{t:'Print',     ox:-31, oy:-28, size:26, fill:'#616161'}] },
+};
+
+const edges = [
+  ['center','contact'],
+  ['center','about'],
+  ['center','branding'],
+  ['center','signage'],
+  ['center','uiux'],
+  ['center','print'],
+];
+
+const K = 0.10, DAMP = 0.68;
+
+// Build draggable SVG node shapes
+function buildNodes() {
+  const layer = document.getElementById('nodesLayer');
+  layer.innerHTML = '';
+  Object.entries(nodes).forEach(([id, n]) => {
+    const g = document.createElementNS(NS, 'g');
+    g.classList.add('node-group');
+    g.setAttribute('data-id', id);
+
+    const path = document.createElementNS(NS, 'path');
+    if (n.shape === 'starburst') {
+      path.setAttribute('d','M16,-47l32,23l-16,22l26,8l-12,37l-26,-8l0,27l-39,0l0,-27l-26,8l-12,-37l26,-8l-16,-22l32,-23l16,22l16,-22Z');
+      path.setAttribute('fill','#00f'); path.setAttribute('stroke','#000'); path.setAttribute('stroke-width','1.67');
+    } else if (n.shape === 'triangle') {
+      path.setAttribute('d','M0,-22 L20,17 L-20,17 Z');
+      path.setAttribute('fill','#f6632b'); path.setAttribute('stroke','#000'); path.setAttribute('stroke-width','1.11');
+    } else {
+      path.setAttribute('d','M0,-17 L17,0 L0,17 L-17,0 Z');
+      path.setAttribute('fill','#00f'); path.setAttribute('stroke','#000'); path.setAttribute('stroke-width','1.11');
+    }
+
+    g.appendChild(path);
+    g.addEventListener('mousedown', onMouseDown);
+    g.addEventListener('mouseenter', () => cursorEl.classList.add('hover'));
+    g.addEventListener('mouseleave',  () => cursorEl.classList.remove('hover'));
+    layer.appendChild(g);
+    n.el = g;
+  });
+}
+
+// Drag state
+let dragId = null, dragOrigin = null, dragStartDx = 0, dragStartDy = 0, didDrag = false;
+
+function onMouseDown(e) {
+  e.preventDefault();
+  e.stopPropagation();
+  dragId       = e.currentTarget.getAttribute('data-id');
+  dragOrigin   = screenToSVG(e.clientX, e.clientY);
+  dragStartDx  = nodes[dragId].dx;
+  dragStartDy  = nodes[dragId].dy;
+  didDrag      = false;
+  nodes[dragId].vx = 0;
+  nodes[dragId].vy = 0;
+}
+
+window.addEventListener('mousemove', e => {
+  if (!dragId) return;
+  const p = screenToSVG(e.clientX, e.clientY);
+  nodes[dragId].dx = dragStartDx + (p.x - dragOrigin.x);
+  nodes[dragId].dy = dragStartDy + (p.y - dragOrigin.y);
+  if (Math.abs(nodes[dragId].dx - dragStartDx) > 4 || Math.abs(nodes[dragId].dy - dragStartDy) > 4) didDrag = true;
+});
+
+window.addEventListener('mouseup', () => {
+  if (!dragId) return;
+  if (!didDrag) openPanel(dragId);
+  dragId = null;
+});
+
+// Animation loop
+function tick() {
+  Object.entries(nodes).forEach(([id, n]) => {
+    if (id === dragId) return;
+    n.vx = (n.vx - K * n.dx) * DAMP;
+    n.vy = (n.vy - K * n.dy) * DAMP;
+    n.dx += n.vx;
+    n.dy += n.vy;
+    if (Math.abs(n.dx) < 0.05 && Math.abs(n.vx) < 0.05) { n.dx = 0; n.vx = 0; }
+    if (Math.abs(n.dy) < 0.05 && Math.abs(n.vy) < 0.05) { n.dy = 0; n.vy = 0; }
+  });
+
+  Object.values(nodes).forEach(n => {
+    n.el.setAttribute('transform', `translate(${n.ox + n.dx},${n.oy + n.dy})`);
+  });
+
+  // Update labels
+  const ll2 = document.getElementById('labelsLayer');
+  ll2.innerHTML = '';
+  Object.values(nodes).forEach(n => {
+    const cx = n.ox + n.dx, cy = n.oy + n.dy;
+    (n.labels || []).forEach(lb => {
+      const t = document.createElementNS(NS, 'text');
+      t.setAttribute('x', cx + lb.ox);
+      t.setAttribute('y', cy + lb.oy);
+      t.setAttribute('style', `font-family:'${lb.font || 'Glacier'}','Cormorant Garamond',Georgia,serif;font-size:${lb.size}px;fill:${lb.fill};font-weight:300;`);
+      t.setAttribute('pointer-events', 'none');
+      t.textContent = lb.t;
+      ll2.appendChild(t);
     });
-  </script>
+  });
+
+  const ll = document.getElementById('linesLayer');
+  ll.innerHTML = '';
+  // Each line: center → unique mid waypoint → node
+  // Waypoints are fixed offsets that feel hand-drawn and organic
+  const bends = {
+    'center-contact':  { tx: 0.6,  ty: 0.2  },
+    'center-about':    { tx: 0.3,  ty: 0.7  },
+    'center-branding': { tx: 0.75, ty: 0.55 },
+    'center-signage':  { tx: 0.35, ty: 0.8  },
+    'center-uiux':     { tx: 0.65, ty: 0.25 },
+    'center-print':    { tx: 0.2,  ty: 0.4  },
+  };
+
+  edges.forEach(([a, b]) => {
+    const na = nodes[a], nb = nodes[b];
+    const x1 = na.ox + na.dx, y1 = na.oy + na.dy;
+    const x2 = nb.ox + nb.dx, y2 = nb.oy + nb.dy;
+    const bend = bends[`${a}-${b}`];
+
+    let d;
+    if (bend) {
+      const mx = x1 + (x2 - x1) * bend.tx;
+      const my = y1 + (y2 - y1) * bend.ty;
+      d = `M${x1},${y1} L${mx},${my} L${x2},${y2}`;
+    } else {
+      d = `M${x1},${y1} L${x2},${y2}`;
+    }
+
+    const path = document.createElementNS(NS, 'path');
+    path.setAttribute('d', d);
+    path.setAttribute('fill', 'none');
+    path.setAttribute('stroke', '#888');
+    path.setAttribute('stroke-width', '1');
+    path.setAttribute('pointer-events', 'none');
+    ll.appendChild(path);
+  });
+
+  requestAnimationFrame(tick);
+}
+
+// Panels
+const panels = {
+  center: () => `<div class="panel-label">JKDesign</div><div class="panel-title">Jack<br><em>Kelly</em></div><div class="panel-body">Graphic + UI/UX Designer.<br><strong>est. 2004 — Hendersonville, NC</strong><br><br>Brand, web, and package design rooted in production knowledge.</div><div class="panel-row"><span class="panel-row-label">Email</span><span class="panel-row-value"><a href="mailto:jack@jkdsgn.com">jack@jkdsgn.com</a></span></div><div class="panel-row"><span class="panel-row-label">Phone</span><span class="panel-row-value">404.626.5763</span></div><div class="panel-row"><span class="panel-row-label">Status</span><span class="panel-row-value" style="color:var(--blue)">Open to Work</span></div>`,
+  about: () => `<div class="panel-label">About</div><div class="panel-title">Jack<br><em>Kelly</em></div><div class="panel-body">I'm a <strong>graphic and UI/UX designer</strong> with a production background most designers don't have.<br><br>Currently at <strong>BP Solutions Group</strong>. Previously at <strong>Great Smoky Mountains Railroad</strong>.<br><br>BFA Graphic Design — <strong>Western Carolina University</strong>.</div><div class="panel-row"><span class="panel-row-label">Adobe CC</span><span class="panel-row-value">Ps · Ai · Id · Ae</span></div><div class="panel-row"><span class="panel-row-label">Design</span><span class="panel-row-value">Figma · Framer · Affinity</span></div><div class="panel-row"><span class="panel-row-label">Production</span><span class="panel-row-value">Vinyl · Print · Signage</span></div>`,
+  contact: () => `<div class="panel-label">Contact</div><div class="panel-title">Let's<br><em>Talk</em></div><div class="panel-body">Available for freelance, full-time, and creative collaborations.</div><div class="form-group"><label class="form-label">Name</label><input class="form-input" type="text" placeholder="Your name"></div><div class="form-group"><label class="form-label">Email</label><input class="form-input" type="email" placeholder="you@email.com"></div><div class="form-group"><label class="form-label">Message</label><textarea class="form-textarea" placeholder="Tell me about your project..."></textarea></div><button class="btn">Send →</button><hr class="panel-divider"><div class="panel-row"><span class="panel-row-label">Email</span><span class="panel-row-value"><a href="mailto:jack@jkdsgn.com">jack@jkdsgn.com</a></span></div><div class="panel-row"><span class="panel-row-label">Phone</span><span class="panel-row-value">404.626.5763</span></div>`,
+  uiux:     () => disc('UI / UX',  'Interface design, prototyping, and user experience.',['Web Design','App Interfaces','Prototyping','Figma','Framer']),
+  branding: () => disc('Branding', 'Visual identity systems from logomark to brand guide.',['Logo Design','Brand Systems','Visual Identity','Style Sheets']),
+  signage:  () => disc('Signage',  'Wayfinding and environmental design for large-scale events.',['Wayfinding','Environmental','Fabrication','Installation']),
+  print:    () => disc('Print',    'Editorial, packaging, and commercial print production.',['Package Design','Editorial','Commercial Print','InDesign']),
+};
+
+function disc(t, d, items) {
+  return `<div class="panel-label">Discipline</div><div class="panel-title">${t}<br><em>&nbsp;</em></div><div class="panel-body">${d}</div><div class="tag-list">${items.map(i=>`<div class="tag-item"><span>${i}</span><div class="tag-dot"></div></div>`).join('')}</div>`;
+}
+
+function openPanel(id) {
+  document.getElementById('panelContent').innerHTML = panels[id]?.() || '';
+  document.getElementById('panel').classList.add('open');
+}
+function closePanel() {
+  document.getElementById('panel').classList.remove('open');
+}
+
+buildNodes();
+tick();
+</script>
 </body>
 </html>
