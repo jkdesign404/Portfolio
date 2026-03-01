@@ -6,55 +6,33 @@
 <title>Jack Kelly</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300&display=swap" rel="stylesheet">
 <style>
+  @font-face {
+    font-family: 'Glacier';
+    src: url('Glacier-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+
   * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
-  :root { --bg:#EAEAEA; --ink:#1a1a1a; --mid:#999; --blue:#0000ff; --orange:#f6632b; }
-  body { background:var(--bg); width:100vw; height:100vh; overflow:hidden; }
+  :root {
+    --bg: #EAEAEA; --ink: #1a1a1a; --mid: #999; --blue: #0000ff; --orange: #f6632b;
+    --glacier: 'Glacier', Georgia, serif;
+    --inter: 'Inter', sans-serif;
+  }
+  body { background: var(--bg); width: 100vw; height: 100vh; overflow: hidden; font-family: var(--glacier); }
 
   .cursor {
-    width:8px; height:8px; background:var(--ink); border-radius:50%;
-    position:fixed; pointer-events:none; z-index:9999;
-    transform:translate(-50%,-50%);
-    transition:width .15s, height .15s, background .15s;
+    width: 8px; height: 8px; background: var(--ink); border-radius: 50%;
+    position: fixed; pointer-events: none; z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: width .15s, height .15s, background .15s;
   }
-  .cursor.hover { width:24px; height:24px; background:var(--blue); opacity:0.3; }
+  .cursor.hover { width: 24px; height: 24px; background: var(--blue); opacity: 0.3; }
 
-  #layoutSVG { position:fixed; inset:0; width:100%; height:100%; }
+  #layoutSVG { position: fixed; inset: 0; width: 100%; height: 100%; }
 
-  .node-group { cursor:grab; }
-  .node-group:active { cursor:grabbing; }
-
-  #panel {
-    position:fixed; top:0; right:-480px; width:380px; height:100vh;
-    background:var(--bg); border-left:1px solid #ccc;
-    z-index:500; padding:52px 32px 40px;
-    transition:right 0.5s cubic-bezier(0.16,1,0.3,1); overflow-y:auto;
-  }
-  #panel.open { right:0; }
-  .panel-close { position:absolute; top:20px; right:20px; font-family:'Inter',sans-serif; font-weight:300; font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--mid); cursor:pointer; }
-  .panel-close:hover { color:var(--ink); }
-  .panel-label { font-family:'Inter',sans-serif; font-weight:300; font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:var(--mid); margin-bottom:12px; }
-  .panel-title { font-family:'Cormorant Garamond','Glacier',Georgia,serif; font-size:42px; line-height:1; margin-bottom:24px; color:var(--ink); }
-  .panel-title em { font-style:italic; color:var(--blue); }
-  .panel-body { font-family:'Inter',sans-serif; font-weight:300; color:var(--mid); font-size:12px; line-height:2; margin-bottom:24px; }
-  .panel-body strong { color:var(--ink); font-weight:300; }
-  .panel-divider { border:none; border-top:1px solid #ccc; margin:18px 0; }
-  .panel-row { display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #ddd; font-size:11px; }
-  .panel-row:first-of-type { border-top:1px solid #ddd; }
-  .panel-row-label { font-weight:300; color:var(--mid); letter-spacing:.1em; text-transform:uppercase; font-size:10px; }
-  .panel-row-value { font-weight:200; color:var(--ink); }
-  .panel-row-value a { color:var(--ink); text-decoration:none; }
-  .panel-row-value a:hover { color:var(--blue); }
-  .form-group { margin-bottom:16px; }
-  .form-label { display:block; font-size:10px; letter-spacing:.15em; text-transform:uppercase; color:var(--mid); margin-bottom:5px; font-weight:300; }
-  .form-input,.form-textarea { width:100%; background:transparent; border:none; border-bottom:1px solid #ccc; padding:7px 0; font-family:'Inter',sans-serif; font-weight:200; font-size:12px; color:var(--ink); outline:none; resize:none; }
-  .form-input:focus,.form-textarea:focus { border-bottom-color:var(--blue); }
-  .form-textarea { min-height:72px; }
-  .btn { padding:10px 20px; font-family:'Inter',sans-serif; font-weight:300; font-size:10px; letter-spacing:.14em; text-transform:uppercase; border:none; background:var(--ink); color:var(--bg); cursor:none; margin-top:6px; }
-  .btn:hover { background:var(--blue); }
-  .tag-list { display:flex; flex-direction:column; margin-top:4px; }
-  .tag-item { padding:11px 0; border-bottom:1px solid #ddd; font-size:11px; font-weight:200; display:flex; justify-content:space-between; align-items:center; }
-  .tag-item:first-child { border-top:1px solid #ddd; }
-  .tag-dot { width:4px; height:4px; background:var(--blue); border-radius:50%; flex-shrink:0; }
+  .node-group { cursor: grab; }
+  .node-group:active { cursor: grabbing; }
 </style>
 </head>
 <body>
@@ -64,19 +42,10 @@
 <svg id="layoutSVG" viewBox="-597 -485 2042 1779" preserveAspectRatio="xMidYMid meet"
   xmlns="http://www.w3.org/2000/svg"
   style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;">
-
   <g id="linesLayer"></g>
   <g id="labelsLayer"></g>
-
-  <!-- Labels rendered by JS, not static -->
-
   <g id="nodesLayer"></g>
 </svg>
-
-<div id="panel">
-  <div class="panel-close" onclick="closePanel()">✕ Close</div>
-  <div id="panelContent"></div>
-</div>
 
 <script>
 const cursorEl = document.getElementById('cursor');
@@ -85,8 +54,8 @@ document.addEventListener('mousemove', e => {
   cursorEl.style.top  = e.clientY + 'px';
 });
 
-const NS = 'http://www.w3.org/2000/svg';
-const VB = { x:-597, y:-485, w:2042, h:1779 };
+const NS  = 'http://www.w3.org/2000/svg';
+const VB  = { x: -597, y: -485, w: 2042, h: 1779 };
 
 function screenToSVG(px, py) {
   const svg  = document.getElementById('layoutSVG');
@@ -100,29 +69,60 @@ function screenToSVG(px, py) {
   };
 }
 
-// Node rest positions + runtime state
+// ── Node definitions ───────────────────────────────────────────────────────
 const nodes = {
-  center:   { ox:424, oy:405, shape:'starburst', dx:0, dy:0, vx:0, vy:0, labels:[{t:'Jack Kelly', ox:-66, oy:105, size:36, fill:'#1a1a1a', font:'Inter'},{t:'est. 2004', ox:-59, oy:138, size:28, fill:'#616161', font:'Glacier'}] },
-  contact:  { ox:730, oy:338, shape:'triangle',  dx:0, dy:0, vx:0, vy:0, labels:[{t:'Contact',   ox:-18, oy:-30, size:26, fill:'#616161'}] },
-  about:    { ox:78,  oy:540, shape:'triangle',  dx:0, dy:0, vx:0, vy:0, labels:[{t:'About',     ox:-18, oy:-30, size:26, fill:'#616161'}] },
-  branding: { ox:905, oy:588, shape:'diamond',   dx:0, dy:0, vx:0, vy:0, labels:[{t:'Branding',  ox:-75, oy:-28, size:26, fill:'#616161'}] },
-  signage:  { ox:363, oy:779, shape:'diamond',   dx:0, dy:0, vx:0, vy:0, labels:[{t:'Signage',   ox:-69, oy:-28, size:26, fill:'#616161'}] },
-  uiux:     { ox:603, oy:18,  shape:'diamond',   dx:0, dy:0, vx:0, vy:0, labels:[{t:'UI / UX',   ox:-31, oy:50,  size:26, fill:'#616161'}] },
-  print:    { ox:35,  oy:270, shape:'diamond',   dx:0, dy:0, vx:0, vy:0, labels:[{t:'Print',     ox:-31, oy:-28, size:26, fill:'#616161'}] },
+  center:   { ox: 424, oy: 405, shape: 'starburst', dx:0, dy:0, vx:0, vy:0,
+    labels: [
+      { t: 'Jack Kelly', ox: -66, oy: 105, size: 36, fill: '#1a1a1a', font: 'Inter' },
+      { t: 'est. 2004',  ox: -59, oy: 138, size: 28, fill: '#616161' }
+    ]
+  },
+  contact:  { ox: 730, oy: 338, shape: 'triangle', dx:0, dy:0, vx:0, vy:0, labels: [{ t: 'Contact',  ox: -40, oy: -30, size: 26, fill: '#616161' }] },
+  about:    { ox: 200, oy: 520, shape: 'triangle', dx:0, dy:0, vx:0, vy:0, labels: [{ t: 'About',    ox: -30, oy: -30, size: 26, fill: '#616161' }] },
+  branding: { ox: 905, oy: 588, shape: 'diamond',  dx:0, dy:0, vx:0, vy:0, labels: [{ t: 'Branding', ox: -75, oy: -28, size: 26, fill: '#616161' }] },
+  signage:  { ox: 363, oy: 779, shape: 'diamond',  dx:0, dy:0, vx:0, vy:0, labels: [{ t: 'Signage',  ox: -55, oy: -28, size: 26, fill: '#616161' }] },
+  uiux:     { ox: 603, oy:  18, shape: 'diamond',  dx:0, dy:0, vx:0, vy:0, labels: [{ t: 'UI / UX',  ox: -40, oy:  50, size: 26, fill: '#616161' }] },
+  print:    { ox:  35, oy: 270, shape: 'diamond',  dx:0, dy:0, vx:0, vy:0, labels: [{ t: 'Print',    ox: -28, oy: -28, size: 26, fill: '#616161' }] },
 };
 
 const edges = [
-  ['center','contact'],
-  ['center','about'],
-  ['center','branding'],
-  ['center','signage'],
-  ['center','uiux'],
-  ['center','print'],
+  ['center', 'contact'],
+  ['center', 'about'],
+  ['center', 'branding'],
+  ['center', 'signage'],
+  ['center', 'uiux'],
+  ['center', 'print'],
 ];
+
+// Bend points for organic lines (main edges only)
+const bends = {
+  'center-contact':  { tx: 0.6,  ty: 0.2  },
+  'center-about':    { tx: 0.3,  ty: 0.7  },
+  'center-branding': { tx: 0.75, ty: 0.55 },
+  'center-signage':  { tx: 0.35, ty: 0.8  },
+  'center-uiux':     { tx: 0.65, ty: 0.25 },
+  'center-print':    { tx: 0.2,  ty: 0.4  },
+};
 
 const K = 0.10, DAMP = 0.68;
 
-// Build draggable SVG node shapes
+// ── Intro animation state ──────────────────────────────────────────────────
+// Each edge animates its line from 0→1 progress, staggered
+// After lines finish, nodes + labels fade in
+const INTRO_DURATION   = 600;  // ms per line
+const INTRO_STAGGER    = 80;   // ms between lines starting
+const NODES_FADE_DELAY = 300;  // ms after last line starts before nodes appear
+const NODES_FADE_DUR   = 500;
+
+let introStart    = null;
+let introComplete = false;
+let nodesOpacity  = 0; // 0→1 during fade
+
+// Per-edge intro progress (0→1)
+const lineProgress = {};
+edges.forEach(([a, b]) => { lineProgress[`${a}-${b}`] = 0; });
+
+// ── Build nodes ────────────────────────────────────────────────────────────
 function buildNodes() {
   const layer = document.getElementById('nodesLayer');
   layer.innerHTML = '';
@@ -130,17 +130,19 @@ function buildNodes() {
     const g = document.createElementNS(NS, 'g');
     g.classList.add('node-group');
     g.setAttribute('data-id', id);
+    g.style.opacity = '0'; // start invisible, fade in after lines
 
     const path = document.createElementNS(NS, 'path');
     if (n.shape === 'starburst') {
-      path.setAttribute('d','M16,-47l32,23l-16,22l26,8l-12,37l-26,-8l0,27l-39,0l0,-27l-26,8l-12,-37l26,-8l-16,-22l32,-23l16,22l16,-22Z');
-      path.setAttribute('fill','#00f'); path.setAttribute('stroke','#000'); path.setAttribute('stroke-width','1.67');
+      path.setAttribute('d', 'M16,-47l32,23l-16,22l26,8l-12,37l-26,-8l0,27l-39,0l0,-27l-26,8l-12,-37l26,-8l-16,-22l32,-23l16,22l16,-22Z');
+      path.setAttribute('fill', '#00f'); path.setAttribute('stroke', '#000'); path.setAttribute('stroke-width', '1.67');
+      path.setAttribute('transform', 'scale(0.75)');
     } else if (n.shape === 'triangle') {
-      path.setAttribute('d','M0,-22 L20,17 L-20,17 Z');
-      path.setAttribute('fill','#f6632b'); path.setAttribute('stroke','#000'); path.setAttribute('stroke-width','1.11');
+      path.setAttribute('d', 'M0,-22 L20,17 L-20,17 Z');
+      path.setAttribute('fill', '#f6632b'); path.setAttribute('stroke', '#000'); path.setAttribute('stroke-width', '1.11');
     } else {
-      path.setAttribute('d','M0,-17 L17,0 L0,17 L-17,0 Z');
-      path.setAttribute('fill','#00f'); path.setAttribute('stroke','#000'); path.setAttribute('stroke-width','1.11');
+      path.setAttribute('d', 'M0,-17 L17,0 L0,17 L-17,0 Z');
+      path.setAttribute('fill', '#00f'); path.setAttribute('stroke', '#000'); path.setAttribute('stroke-width', '1.11');
     }
 
     g.appendChild(path);
@@ -152,17 +154,23 @@ function buildNodes() {
   });
 }
 
-// Drag state
-let dragId = null, dragOrigin = null, dragStartDx = 0, dragStartDy = 0, didDrag = false;
+// ── World position ─────────────────────────────────────────────────────────
+function worldPos(id) {
+  const n = nodes[id];
+  return { x: n.ox + n.dx, y: n.oy + n.dy };
+}
+
+// ── Drag ───────────────────────────────────────────────────────────────────
+let dragId = null, dragOrigin = null, dragStartDx = 0, dragStartDy = 0;
 
 function onMouseDown(e) {
+  if (!introComplete) return; // no drag during intro
   e.preventDefault();
   e.stopPropagation();
-  dragId       = e.currentTarget.getAttribute('data-id');
-  dragOrigin   = screenToSVG(e.clientX, e.clientY);
-  dragStartDx  = nodes[dragId].dx;
-  dragStartDy  = nodes[dragId].dy;
-  didDrag      = false;
+  dragId      = e.currentTarget.getAttribute('data-id');
+  dragOrigin  = screenToSVG(e.clientX, e.clientY);
+  dragStartDx = nodes[dragId].dx;
+  dragStartDy = nodes[dragId].dy;
   nodes[dragId].vx = 0;
   nodes[dragId].vy = 0;
 }
@@ -172,17 +180,16 @@ window.addEventListener('mousemove', e => {
   const p = screenToSVG(e.clientX, e.clientY);
   nodes[dragId].dx = dragStartDx + (p.x - dragOrigin.x);
   nodes[dragId].dy = dragStartDy + (p.y - dragOrigin.y);
-  if (Math.abs(nodes[dragId].dx - dragStartDx) > 4 || Math.abs(nodes[dragId].dy - dragStartDy) > 4) didDrag = true;
 });
 
-window.addEventListener('mouseup', () => {
-  if (!dragId) return;
-  if (!didDrag) openPanel(dragId);
-  dragId = null;
-});
+window.addEventListener('mouseup', () => { dragId = null; });
 
-// Animation loop
-function tick() {
+// ── Animation loop ─────────────────────────────────────────────────────────
+function tick(ts) {
+  if (!introStart) introStart = ts;
+  const elapsed = ts - introStart;
+
+  // Spring physics
   Object.entries(nodes).forEach(([id, n]) => {
     if (id === dragId) return;
     n.vx = (n.vx - K * n.dx) * DAMP;
@@ -193,56 +200,110 @@ function tick() {
     if (Math.abs(n.dy) < 0.05 && Math.abs(n.vy) < 0.05) { n.dy = 0; n.vy = 0; }
   });
 
-  Object.values(nodes).forEach(n => {
-    n.el.setAttribute('transform', `translate(${n.ox + n.dx},${n.oy + n.dy})`);
+  // Update node positions
+  Object.entries(nodes).forEach(([id, n]) => {
+    const w = worldPos(id);
+    n.el.setAttribute('transform', `translate(${w.x},${w.y})`);
+    n._wx = w.x; n._wy = w.y;
   });
 
-  // Update labels
+  // ── Intro: advance line progress ──
+  let allLinesComplete = true;
+  edges.forEach(([a, b], i) => {
+    const key       = `${a}-${b}`;
+    const lineStart = i * INTRO_STAGGER;
+    const t         = Math.min(1, Math.max(0, (elapsed - lineStart) / INTRO_DURATION));
+    // Ease out cubic
+    lineProgress[key] = t < 1 ? 1 - Math.pow(1 - t, 3) : 1;
+    if (lineProgress[key] < 1) allLinesComplete = false;
+  });
+
+  // ── Intro: fade in nodes after lines ──
+  const nodesFadeStart = (edges.length - 1) * INTRO_STAGGER + INTRO_DURATION - NODES_FADE_DELAY;
+  const nodesT = Math.min(1, Math.max(0, (elapsed - nodesFadeStart) / NODES_FADE_DUR));
+  nodesOpacity = 1 - Math.pow(1 - nodesT, 2); // ease out
+
+  if (nodesOpacity >= 1 && allLinesComplete) introComplete = true;
+
+  // Apply node opacity
+  Object.values(nodes).forEach(n => {
+    n.el.style.opacity = nodesOpacity;
+  });
+
+  // ── Draw labels (fade with nodes) ──
   const ll2 = document.getElementById('labelsLayer');
   ll2.innerHTML = '';
-  Object.values(nodes).forEach(n => {
-    const cx = n.ox + n.dx, cy = n.oy + n.dy;
-    (n.labels || []).forEach(lb => {
-      const t = document.createElementNS(NS, 'text');
-      t.setAttribute('x', cx + lb.ox);
-      t.setAttribute('y', cy + lb.oy);
-      t.setAttribute('style', `font-family:'${lb.font || 'Glacier'}','Cormorant Garamond',Georgia,serif;font-size:${lb.size}px;fill:${lb.fill};font-weight:300;`);
-      t.setAttribute('pointer-events', 'none');
-      t.textContent = lb.t;
-      ll2.appendChild(t);
+  if (nodesOpacity > 0) {
+    Object.values(nodes).forEach(n => {
+      const cx = n._wx, cy = n._wy;
+      (n.labels || []).forEach(lb => {
+        const t = document.createElementNS(NS, 'text');
+        t.setAttribute('x', cx + lb.ox);
+        t.setAttribute('y', cy + lb.oy);
+        const isName = lb.font === 'Inter';
+        t.setAttribute('style',
+          `font-family:${isName ? "'Inter',sans-serif" : "'Glacier',Georgia,serif"};` +
+          `font-size:${lb.size}px;fill:${lb.fill};font-weight:${isName ? 300 : 'normal'};` +
+          `opacity:${nodesOpacity};`
+        );
+        t.setAttribute('pointer-events', 'none');
+        t.textContent = lb.t;
+        ll2.appendChild(t);
+      });
     });
-  });
+  }
 
+  // ── Draw lines (animated from center outward) ──
   const ll = document.getElementById('linesLayer');
   ll.innerHTML = '';
-  // Each line: center → unique mid waypoint → node
-  // Waypoints are fixed offsets that feel hand-drawn and organic
-  const bends = {
-    'center-contact':  { tx: 0.6,  ty: 0.2  },
-    'center-about':    { tx: 0.3,  ty: 0.7  },
-    'center-branding': { tx: 0.75, ty: 0.55 },
-    'center-signage':  { tx: 0.35, ty: 0.8  },
-    'center-uiux':     { tx: 0.65, ty: 0.25 },
-    'center-print':    { tx: 0.2,  ty: 0.4  },
-  };
 
   edges.forEach(([a, b]) => {
-    const na = nodes[a], nb = nodes[b];
-    const x1 = na.ox + na.dx, y1 = na.oy + na.dy;
-    const x2 = nb.ox + nb.dx, y2 = nb.oy + nb.dy;
-    const bend = bends[`${a}-${b}`];
+    const key  = `${a}-${b}`;
+    const prog = lineProgress[key];
+    if (prog <= 0) return;
 
-    let d;
+    const x1 = nodes[a]._wx, y1 = nodes[a]._wy;
+    const x2 = nodes[b]._wx, y2 = nodes[b]._wy;
+    const bend = bends[key];
+
+    // Compute full path points
+    let pts;
     if (bend) {
       const mx = x1 + (x2 - x1) * bend.tx;
       const my = y1 + (y2 - y1) * bend.ty;
-      d = `M${x1},${y1} L${mx},${my} L${x2},${y2}`;
+      pts = [[x1, y1], [mx, my], [x2, y2]];
     } else {
-      d = `M${x1},${y1} L${x2},${y2}`;
+      pts = [[x1, y1], [x2, y2]];
+    }
+
+    // Interpolate along the polyline up to prog
+    const totalLen = pts.reduce((acc, pt, i) => {
+      if (i === 0) return 0;
+      const dx = pt[0] - pts[i-1][0], dy = pt[1] - pts[i-1][1];
+      return acc + Math.sqrt(dx*dx + dy*dy);
+    }, 0);
+
+    const targetLen = totalLen * prog;
+    let drawn = 0;
+    let dStr = `M${pts[0][0]},${pts[0][1]}`;
+
+    for (let i = 1; i < pts.length; i++) {
+      const dx = pts[i][0] - pts[i-1][0];
+      const dy = pts[i][1] - pts[i-1][1];
+      const segLen = Math.sqrt(dx*dx + dy*dy);
+      if (drawn + segLen <= targetLen) {
+        dStr += ` L${pts[i][0]},${pts[i][1]}`;
+        drawn += segLen;
+      } else {
+        const rem = targetLen - drawn;
+        const frac = rem / segLen;
+        dStr += ` L${pts[i-1][0] + dx*frac},${pts[i-1][1] + dy*frac}`;
+        break;
+      }
     }
 
     const path = document.createElementNS(NS, 'path');
-    path.setAttribute('d', d);
+    path.setAttribute('d', dStr);
     path.setAttribute('fill', 'none');
     path.setAttribute('stroke', '#888');
     path.setAttribute('stroke-width', '1');
@@ -253,31 +314,16 @@ function tick() {
   requestAnimationFrame(tick);
 }
 
-// Panels
-const panels = {
-  center: () => `<div class="panel-label">JKDesign</div><div class="panel-title">Jack<br><em>Kelly</em></div><div class="panel-body">Graphic + UI/UX Designer.<br><strong>est. 2004 — Hendersonville, NC</strong><br><br>Brand, web, and package design rooted in production knowledge.</div><div class="panel-row"><span class="panel-row-label">Email</span><span class="panel-row-value"><a href="mailto:jack@jkdsgn.com">jack@jkdsgn.com</a></span></div><div class="panel-row"><span class="panel-row-label">Phone</span><span class="panel-row-value">404.626.5763</span></div><div class="panel-row"><span class="panel-row-label">Status</span><span class="panel-row-value" style="color:var(--blue)">Open to Work</span></div>`,
-  about: () => `<div class="panel-label">About</div><div class="panel-title">Jack<br><em>Kelly</em></div><div class="panel-body">I'm a <strong>graphic and UI/UX designer</strong> with a production background most designers don't have.<br><br>Currently at <strong>BP Solutions Group</strong>. Previously at <strong>Great Smoky Mountains Railroad</strong>.<br><br>BFA Graphic Design — <strong>Western Carolina University</strong>.</div><div class="panel-row"><span class="panel-row-label">Adobe CC</span><span class="panel-row-value">Ps · Ai · Id · Ae</span></div><div class="panel-row"><span class="panel-row-label">Design</span><span class="panel-row-value">Figma · Framer · Affinity</span></div><div class="panel-row"><span class="panel-row-label">Production</span><span class="panel-row-value">Vinyl · Print · Signage</span></div>`,
-  contact: () => `<div class="panel-label">Contact</div><div class="panel-title">Let's<br><em>Talk</em></div><div class="panel-body">Available for freelance, full-time, and creative collaborations.</div><div class="form-group"><label class="form-label">Name</label><input class="form-input" type="text" placeholder="Your name"></div><div class="form-group"><label class="form-label">Email</label><input class="form-input" type="email" placeholder="you@email.com"></div><div class="form-group"><label class="form-label">Message</label><textarea class="form-textarea" placeholder="Tell me about your project..."></textarea></div><button class="btn">Send →</button><hr class="panel-divider"><div class="panel-row"><span class="panel-row-label">Email</span><span class="panel-row-value"><a href="mailto:jack@jkdsgn.com">jack@jkdsgn.com</a></span></div><div class="panel-row"><span class="panel-row-label">Phone</span><span class="panel-row-value">404.626.5763</span></div>`,
-  uiux:     () => disc('UI / UX',  'Interface design, prototyping, and user experience.',['Web Design','App Interfaces','Prototyping','Figma','Framer']),
-  branding: () => disc('Branding', 'Visual identity systems from logomark to brand guide.',['Logo Design','Brand Systems','Visual Identity','Style Sheets']),
-  signage:  () => disc('Signage',  'Wayfinding and environmental design for large-scale events.',['Wayfinding','Environmental','Fabrication','Installation']),
-  print:    () => disc('Print',    'Editorial, packaging, and commercial print production.',['Package Design','Editorial','Commercial Print','InDesign']),
-};
-
-function disc(t, d, items) {
-  return `<div class="panel-label">Discipline</div><div class="panel-title">${t}<br><em>&nbsp;</em></div><div class="panel-body">${d}</div><div class="tag-list">${items.map(i=>`<div class="tag-item"><span>${i}</span><div class="tag-dot"></div></div>`).join('')}</div>`;
-}
-
-function openPanel(id) {
-  document.getElementById('panelContent').innerHTML = panels[id]?.() || '';
-  document.getElementById('panel').classList.add('open');
-}
-function closePanel() {
-  document.getElementById('panel').classList.remove('open');
-}
-
+// ── Init ───────────────────────────────────────────────────────────────────
 buildNodes();
-tick();
+
+// Pre-init world positions
+Object.keys(nodes).forEach(id => {
+  const w = worldPos(id);
+  nodes[id]._wx = w.x; nodes[id]._wy = w.y;
+});
+
+requestAnimationFrame(tick);
 </script>
 </body>
 </html>
