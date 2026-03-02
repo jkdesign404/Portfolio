@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Jack Kelly</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400&display=swap" rel="stylesheet">
 <style>
   @font-face {
     font-family: 'Glacier';
@@ -13,317 +13,300 @@
     font-style: normal;
   }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
-  :root {
-    --bg: #EAEAEA; --ink: #1a1a1a; --mid: #999; --blue: #0000ff; --orange: #f6632b;
-    --glacier: 'Glacier', Georgia, serif;
-    --inter: 'Inter', sans-serif;
-  }
-  body { background: var(--bg); width: 100vw; height: 100vh; overflow: hidden; font-family: var(--glacier); }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
-  .cursor {
-    width: 8px; height: 8px; background: var(--ink); border-radius: 50%;
-    position: fixed; pointer-events: none; z-index: 9999;
+  body {
+    background: #EBEBEB;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    position: relative;
+  }
+
+  .triangle-widget {
+    position: absolute;
     transform: translate(-50%, -50%);
-    transition: width .15s, height .15s, background .15s;
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
   }
-  .cursor.hover { width: 24px; height: 24px; background: var(--blue); opacity: 0.3; }
 
-  #layoutSVG { position: fixed; inset: 0; width: 100%; height: 100%; }
+.starburst {
+    grid-column: 2;
+    grid-row: 2;
+    place-self: center;
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+    z-index: 1;
+  }
 
-  .node-group { cursor: grab; }
-  .node-group:active { cursor: grabbing; }
+  .starburst.dragging { cursor: grabbing; }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+
+  .starburst-shape {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: spin 24s linear infinite;
+  }
+
+  .image-frame {
+    grid-column: 1;
+    grid-row: 2;
+    place-self: center;
+    transform: translateY(-120px);
+    width: 200px;
+    height: 260px;
+    border: 6px solid #fff;
+    background: #d0d0d0;
+    overflow: hidden;
+  }
+
+  .image-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .image-frame-right {
+    grid-column: 3;
+    grid-row: 2;
+    place-self: center;
+    transform: translateY(120px);
+    width: 200px;
+    height: 260px;
+    border: 6px solid #fff;
+    background: #d0d0d0;
+    overflow: hidden;
+  }
+
+  .image-frame-right img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
 </style>
 </head>
 <body>
 
-<div class="cursor" id="cursor"></div>
+<div class="image-frame">
+  <img src="Project images/goteborg cover image.jpg" alt="Göteborg cover image">
+</div>
 
-<svg id="layoutSVG" viewBox="-597 -485 2042 1779" preserveAspectRatio="xMidYMid meet"
-  xmlns="http://www.w3.org/2000/svg"
-  style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;">
-  <g id="linesLayer"></g>
-  <g id="labelsLayer"></g>
-  <g id="nodesLayer"></g>
+<svg class="starburst" width="69" height="82" viewBox="0 0 124 140" xmlns="http://www.w3.org/2000/svg" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
+  <path class="starburst-shape" d="M73.714,1.25l23.883,17.352l-11.942,16.436l19.322,6.278l-9.123,28.076l-19.322,-6.278l0,20.316l-29.521,0l0,-20.316l-19.322,6.278l-9.123,-28.076l19.322,-6.278l-11.942,-16.436l23.883,-17.352l11.942,16.436l11.942,-16.436Z" style="fill:#00f;stroke:#000;stroke-width:2.5px;"/>
+  <text x="26.207px" y="139.522px" style="font-family:'Glacier-Regular', 'Glacier';font-size:24.62px;fill:#3a4671;">b. 2004</text>
+  <text x="-1.577px" y="114.35px" style="font-family:'Inter-Light', 'Inter';font-weight:300;font-size:26.92px;">Jack K<tspan x="81.668px" y="114.35px">e</tspan>lly</text>
+</svg>
+
+<svg class="triangle-widget" id="node-branding" width="46" height="63" viewBox="0 0 124 160" xmlns="http://www.w3.org/2000/svg" style="top:calc(50vh - 160px);left:calc(50vw - 60px);fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
+  <path d="M62,5 L8,88 L116,88 Z" style="fill:#f4f4f0;stroke:#000;stroke-width:2.5px;"/>
+  <text x="62" y="124" text-anchor="middle" style="font-family:'Inter', sans-serif;font-weight:300;font-size:32px;fill:#000;">Branding</text>
+</svg>
+
+<svg class="triangle-widget" id="node-uiux" width="46" height="63" viewBox="0 0 124 160" xmlns="http://www.w3.org/2000/svg" style="top:50vh;left:calc(50vw + 180px);fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
+  <path d="M62,5 L8,88 L116,88 Z" style="fill:#f4f4f0;stroke:#000;stroke-width:2.5px;"/>
+  <text x="62" y="124" text-anchor="middle" style="font-family:'Inter', sans-serif;font-weight:300;font-size:32px;fill:#000;">UI/UX</text>
+</svg>
+
+<svg class="triangle-widget" id="node-print" width="46" height="63" viewBox="0 0 124 160" xmlns="http://www.w3.org/2000/svg" style="top:calc(50vh + 130px);left:calc(50vw - 110px);fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
+  <path d="M62,5 L8,88 L116,88 Z" style="fill:#f4f4f0;stroke:#000;stroke-width:2.5px;"/>
+  <text x="62" y="124" text-anchor="middle" style="font-family:'Inter', sans-serif;font-weight:300;font-size:32px;fill:#000;">Print</text>
+</svg>
+
+<div class="image-frame-right">
+  <img src="" alt="Portfolio image">
+</div>
+
+<svg class="triangle-widget" id="node-contact" width="46" height="63" viewBox="0 0 124 160" xmlns="http://www.w3.org/2000/svg" style="top:50vh;left:calc(50vw - 220px);fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
+  <circle cx="62" cy="47" r="42" style="fill:#ff5f1f;stroke:#ff5f1f;stroke-width:2.5px;"/>
+  <text x="62" y="124" text-anchor="middle" style="font-family:'Inter', sans-serif;font-weight:300;font-size:32px;fill:#000;">Contact</text>
+</svg>
+
+<svg class="triangle-widget" id="node-projects" width="46" height="63" viewBox="0 0 124 160" xmlns="http://www.w3.org/2000/svg" style="top:calc(50vh - 110px);left:calc(50vw + 100px);fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
+  <circle cx="62" cy="47" r="42" style="fill:none;stroke:#ff5f1f;stroke-width:2.5px;"/>
+  <text x="62" y="124" text-anchor="middle" style="font-family:'Inter', sans-serif;font-weight:300;font-size:32px;fill:#000;">Projects</text>
+</svg>
+
+<svg class="triangle-widget" id="node-about" width="46" height="63" viewBox="0 0 124 160" xmlns="http://www.w3.org/2000/svg" style="top:calc(50vh + 130px);left:calc(50vw + 40px);fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
+  <circle cx="62" cy="47" r="42" style="fill:none;stroke:#ff5f1f;stroke-width:2.5px;"/>
+  <text x="62" y="124" text-anchor="middle" style="font-family:'Inter', sans-serif;font-weight:300;font-size:32px;fill:#000;">About</text>
 </svg>
 
 <script>
-const cursorEl = document.getElementById('cursor');
-document.addEventListener('mousemove', e => {
-  cursorEl.style.left = e.clientX + 'px';
-  cursorEl.style.top  = e.clientY + 'px';
+// ── Intro: frames grow from 0 at center and expand outward ──
+const frameLeft  = document.querySelector('.image-frame');
+const frameRight = document.querySelector('.image-frame-right');
+const ease = 'cubic-bezier(0.4, 0, 0.2, 1)';
+
+frameLeft.style.transition  = 'none';
+frameRight.style.transition = 'none';
+frameLeft.style.opacity  = '0';
+frameRight.style.opacity = '0';
+frameLeft.style.width    = '0';
+frameRight.style.width   = '0';
+frameLeft.style.height   = '0';
+frameRight.style.height  = '0';
+frameLeft.style.transform  = 'translate(33.33vw, 120px)';
+frameRight.style.transform = 'translate(-33.33vw, -120px)';
+
+setTimeout(() => {
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    frameLeft.style.transition  = `transform 1.4s ${ease}, width 1.2s ${ease}, height 1.2s ${ease}, opacity 1s ease`;
+    frameRight.style.transition = `transform 1.4s ${ease}, width 1.2s ${ease}, height 1.2s ${ease}, opacity 1s ease`;
+    frameLeft.style.opacity  = '1';
+    frameRight.style.opacity = '1';
+    frameLeft.style.width    = '200px';
+    frameRight.style.width   = '200px';
+    frameLeft.style.height   = '260px';
+    frameRight.style.height  = '260px';
+    frameLeft.style.transform  = 'translateY(-120px)';
+    frameRight.style.transform = 'translateY(120px)';
+  }));
+}, 400);
+
+// ── Starburst rubber band drag ──
+const starburst = document.querySelector('.starburst');
+let dragging = false;
+let originX = 0, originY = 0;
+let curX = 0, curY = 0;
+
+starburst.addEventListener('pointerdown', e => {
+  dragging = true;
+  originX = e.clientX - curX;
+  originY = e.clientY - curY;
+  starburst.style.transition = 'none';
+  starburst.classList.add('dragging');
+  starburst.setPointerCapture(e.pointerId);
 });
 
-const NS  = 'http://www.w3.org/2000/svg';
-const VB  = { x: -597, y: -485, w: 2042, h: 1779 };
+starburst.addEventListener('pointermove', e => {
+  if (!dragging) return;
+  curX = e.clientX - originX;
+  curY = e.clientY - originY;
+  starburst.style.transform = `translate(${curX}px, ${curY}px)`;
+});
 
-function screenToSVG(px, py) {
-  const svg  = document.getElementById('layoutSVG');
-  const rect = svg.getBoundingClientRect();
-  const scale = Math.min(rect.width / VB.w, rect.height / VB.h);
-  const ox = (rect.width  - VB.w * scale) / 2;
-  const oy = (rect.height - VB.h * scale) / 2;
-  return {
-    x: (px - rect.left - ox) / scale + VB.x,
-    y: (py - rect.top  - oy) / scale + VB.y
+function release() {
+  if (!dragging) return;
+  dragging = false;
+  curX = 0;
+  curY = 0;
+  starburst.classList.remove('dragging');
+  starburst.style.transition = 'transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1)';
+  starburst.style.transform  = 'translate(0, 0)';
+}
+
+starburst.addEventListener('pointerup', release);
+starburst.addEventListener('pointercancel', release);
+
+// ── Triangle node float + drag ──
+let mouseX = -9999, mouseY = -9999;
+document.addEventListener('pointermove', e => { mouseX = e.clientX; mouseY = e.clientY; });
+
+function randVel() { return (Math.random() * 0.04 - 0.02); }
+
+const floatNodes = [...document.querySelectorAll('.triangle-widget')].map(node => {
+  // Resolve initial calc() position to concrete pixels
+  const rect = node.getBoundingClientRect();
+  const x = rect.left + rect.width  / 2;
+  const y = rect.top  + rect.height / 2;
+  node.style.left = x + 'px';
+  node.style.top  = y + 'px';
+
+  const state = { node, x, y, vx: randVel(), vy: randVel(), dragging: false,
+                  pOriginX: 0, pOriginY: 0, nOriginX: 0, nOriginY: 0 };
+
+  node.addEventListener('pointerdown', e => {
+    state.dragging = true;
+    state.nOriginX = state.x;
+    state.nOriginY = state.y;
+    state.pOriginX = e.clientX;
+    state.pOriginY = e.clientY;
+    node.style.cursor = 'grabbing';
+    node.setPointerCapture(e.pointerId);
+  });
+
+  node.addEventListener('pointermove', e => {
+    if (!state.dragging) return;
+    state.x = state.nOriginX + e.clientX - state.pOriginX;
+    state.y = state.nOriginY + e.clientY - state.pOriginY;
+    node.style.left = state.x + 'px';
+    node.style.top  = state.y + 'px';
+  });
+
+  const endDrag = () => {
+    if (!state.dragging) return;
+    state.dragging = false;
+    state.vx = randVel();
+    state.vy = randVel();
+    node.style.cursor = '';
   };
-}
+  node.addEventListener('pointerup',     endDrag);
+  node.addEventListener('pointercancel', endDrag);
 
-// ── Node definitions ───────────────────────────────────────────────────────
-const nodes = {
-  center:   { ox: 424, oy: 405, shape: 'starburst', dx:0, dy:0, vx:0, vy:0,
-    labels: [
-      { t: 'Jack Kelly', ox: -66, oy: 105, size: 36, fill: '#1a1a1a', font: 'Inter' },
-      { t: 'est. 2004',  ox: -59, oy: 138, size: 28, fill: '#616161' }
-    ]
-  },
-  contact:  { ox: 730, oy: 338, shape: 'triangle', dx:0, dy:0, vx:0, vy:0, labels: [{ t: 'Contact',  ox: -40, oy: -30, size: 26, fill: '#616161' }] },
-  about:    { ox: 200, oy: 520, shape: 'triangle', dx:0, dy:0, vx:0, vy:0, labels: [{ t: 'About',    ox: -30, oy: -30, size: 26, fill: '#616161' }] },
-  branding: { ox: 905, oy: 588, shape: 'diamond',  dx:0, dy:0, vx:0, vy:0, labels: [{ t: 'Branding', ox: -75, oy: -28, size: 26, fill: '#616161' }] },
-  signage:  { ox: 363, oy: 779, shape: 'diamond',  dx:0, dy:0, vx:0, vy:0, labels: [{ t: 'Signage',  ox: -55, oy: -28, size: 26, fill: '#616161' }] },
-  uiux:     { ox: 603, oy:  18, shape: 'diamond',  dx:0, dy:0, vx:0, vy:0, labels: [{ t: 'UI / UX',  ox: -40, oy:  50, size: 26, fill: '#616161' }] },
-  print:    { ox:  35, oy: 270, shape: 'diamond',  dx:0, dy:0, vx:0, vy:0, labels: [{ t: 'Print',    ox: -28, oy: -28, size: 26, fill: '#616161' }] },
-};
-
-const edges = [
-  ['center', 'contact'],
-  ['center', 'about'],
-  ['center', 'branding'],
-  ['center', 'signage'],
-  ['center', 'uiux'],
-  ['center', 'print'],
-];
-
-// Bend points for organic lines (main edges only)
-const bends = {
-  'center-contact':  { tx: 0.6,  ty: 0.2  },
-  'center-about':    { tx: 0.3,  ty: 0.7  },
-  'center-branding': { tx: 0.75, ty: 0.55 },
-  'center-signage':  { tx: 0.35, ty: 0.8  },
-  'center-uiux':     { tx: 0.65, ty: 0.25 },
-  'center-print':    { tx: 0.2,  ty: 0.4  },
-};
-
-const K = 0.10, DAMP = 0.68;
-
-// ── Intro animation state ──────────────────────────────────────────────────
-// Each edge animates its line from 0→1 progress, staggered
-// After lines finish, nodes + labels fade in
-const INTRO_DURATION   = 600;  // ms per line
-const INTRO_STAGGER    = 80;   // ms between lines starting
-const NODES_FADE_DELAY = 300;  // ms after last line starts before nodes appear
-const NODES_FADE_DUR   = 500;
-
-let introStart    = null;
-let introComplete = false;
-let nodesOpacity  = 0; // 0→1 during fade
-
-// Per-edge intro progress (0→1)
-const lineProgress = {};
-edges.forEach(([a, b]) => { lineProgress[`${a}-${b}`] = 0; });
-
-// ── Build nodes ────────────────────────────────────────────────────────────
-function buildNodes() {
-  const layer = document.getElementById('nodesLayer');
-  layer.innerHTML = '';
-  Object.entries(nodes).forEach(([id, n]) => {
-    const g = document.createElementNS(NS, 'g');
-    g.classList.add('node-group');
-    g.setAttribute('data-id', id);
-    g.style.opacity = '0'; // start invisible, fade in after lines
-
-    const path = document.createElementNS(NS, 'path');
-    if (n.shape === 'starburst') {
-      path.setAttribute('d', 'M16,-47l32,23l-16,22l26,8l-12,37l-26,-8l0,27l-39,0l0,-27l-26,8l-12,-37l26,-8l-16,-22l32,-23l16,22l16,-22Z');
-      path.setAttribute('fill', '#00f'); path.setAttribute('stroke', '#000'); path.setAttribute('stroke-width', '1.67');
-      path.setAttribute('transform', 'scale(0.75)');
-    } else if (n.shape === 'triangle') {
-      path.setAttribute('d', 'M0,-22 L20,17 L-20,17 Z');
-      path.setAttribute('fill', '#f6632b'); path.setAttribute('stroke', '#000'); path.setAttribute('stroke-width', '1.11');
-    } else {
-      path.setAttribute('d', 'M0,-17 L17,0 L0,17 L-17,0 Z');
-      path.setAttribute('fill', '#00f'); path.setAttribute('stroke', '#000'); path.setAttribute('stroke-width', '1.11');
-    }
-
-    g.appendChild(path);
-    g.addEventListener('mousedown', onMouseDown);
-    g.addEventListener('mouseenter', () => cursorEl.classList.add('hover'));
-    g.addEventListener('mouseleave',  () => cursorEl.classList.remove('hover'));
-    layer.appendChild(g);
-    n.el = g;
-  });
-}
-
-// ── World position ─────────────────────────────────────────────────────────
-function worldPos(id) {
-  const n = nodes[id];
-  return { x: n.ox + n.dx, y: n.oy + n.dy };
-}
-
-// ── Drag ───────────────────────────────────────────────────────────────────
-let dragId = null, dragOrigin = null, dragStartDx = 0, dragStartDy = 0;
-
-function onMouseDown(e) {
-  if (!introComplete) return; // no drag during intro
-  e.preventDefault();
-  e.stopPropagation();
-  dragId      = e.currentTarget.getAttribute('data-id');
-  dragOrigin  = screenToSVG(e.clientX, e.clientY);
-  dragStartDx = nodes[dragId].dx;
-  dragStartDy = nodes[dragId].dy;
-  nodes[dragId].vx = 0;
-  nodes[dragId].vy = 0;
-}
-
-window.addEventListener('mousemove', e => {
-  if (!dragId) return;
-  const p = screenToSVG(e.clientX, e.clientY);
-  nodes[dragId].dx = dragStartDx + (p.x - dragOrigin.x);
-  nodes[dragId].dy = dragStartDy + (p.y - dragOrigin.y);
+  return state;
 });
 
-window.addEventListener('mouseup', () => { dragId = null; });
+(function floatLoop() {
+  const W = window.innerWidth, H = window.innerHeight;
 
-// ── Animation loop ─────────────────────────────────────────────────────────
-function tick(ts) {
-  if (!introStart) introStart = ts;
-  const elapsed = ts - introStart;
+  floatNodes.forEach(s => {
+    if (s.dragging) return;
 
-  // Spring physics
-  Object.entries(nodes).forEach(([id, n]) => {
-    if (id === dragId) return;
-    n.vx = (n.vx - K * n.dx) * DAMP;
-    n.vy = (n.vy - K * n.dy) * DAMP;
-    n.dx += n.vx;
-    n.dy += n.vy;
-    if (Math.abs(n.dx) < 0.05 && Math.abs(n.vx) < 0.05) { n.dx = 0; n.vx = 0; }
-    if (Math.abs(n.dy) < 0.05 && Math.abs(n.vy) < 0.05) { n.dy = 0; n.vy = 0; }
-  });
+    const hw = s.node.offsetWidth  / 2;
+    const hh = s.node.offsetHeight / 2;
 
-  // Update node positions
-  Object.entries(nodes).forEach(([id, n]) => {
-    const w = worldPos(id);
-    n.el.setAttribute('transform', `translate(${w.x},${w.y})`);
-    n._wx = w.x; n._wy = w.y;
-  });
-
-  // ── Intro: advance line progress ──
-  let allLinesComplete = true;
-  edges.forEach(([a, b], i) => {
-    const key       = `${a}-${b}`;
-    const lineStart = i * INTRO_STAGGER;
-    const t         = Math.min(1, Math.max(0, (elapsed - lineStart) / INTRO_DURATION));
-    // Ease out cubic
-    lineProgress[key] = t < 1 ? 1 - Math.pow(1 - t, 3) : 1;
-    if (lineProgress[key] < 1) allLinesComplete = false;
-  });
-
-  // ── Intro: fade in nodes after lines ──
-  const nodesFadeStart = (edges.length - 1) * INTRO_STAGGER + INTRO_DURATION - NODES_FADE_DELAY;
-  const nodesT = Math.min(1, Math.max(0, (elapsed - nodesFadeStart) / NODES_FADE_DUR));
-  nodesOpacity = 1 - Math.pow(1 - nodesT, 2); // ease out
-
-  if (nodesOpacity >= 1 && allLinesComplete) introComplete = true;
-
-  // Apply node opacity
-  Object.values(nodes).forEach(n => {
-    n.el.style.opacity = nodesOpacity;
-  });
-
-  // ── Draw labels (fade with nodes) ──
-  const ll2 = document.getElementById('labelsLayer');
-  ll2.innerHTML = '';
-  if (nodesOpacity > 0) {
-    Object.values(nodes).forEach(n => {
-      const cx = n._wx, cy = n._wy;
-      (n.labels || []).forEach(lb => {
-        const t = document.createElementNS(NS, 'text');
-        t.setAttribute('x', cx + lb.ox);
-        t.setAttribute('y', cy + lb.oy);
-        const isName = lb.font === 'Inter';
-        t.setAttribute('style',
-          `font-family:${isName ? "'Inter',sans-serif" : "'Glacier',Georgia,serif"};` +
-          `font-size:${lb.size}px;fill:${lb.fill};font-weight:${isName ? 300 : 'normal'};` +
-          `opacity:${nodesOpacity};`
-        );
-        t.setAttribute('pointer-events', 'none');
-        t.textContent = lb.t;
-        ll2.appendChild(t);
-      });
-    });
-  }
-
-  // ── Draw lines (animated from center outward) ──
-  const ll = document.getElementById('linesLayer');
-  ll.innerHTML = '';
-
-  edges.forEach(([a, b]) => {
-    const key  = `${a}-${b}`;
-    const prog = lineProgress[key];
-    if (prog <= 0) return;
-
-    const x1 = nodes[a]._wx, y1 = nodes[a]._wy;
-    const x2 = nodes[b]._wx, y2 = nodes[b]._wy;
-    const bend = bends[key];
-
-    // Compute full path points
-    let pts;
-    if (bend) {
-      const mx = x1 + (x2 - x1) * bend.tx;
-      const my = y1 + (y2 - y1) * bend.ty;
-      pts = [[x1, y1], [mx, my], [x2, y2]];
-    } else {
-      pts = [[x1, y1], [x2, y2]];
+    // Mouse attraction within 120px
+    const dx = mouseX - s.x, dy = mouseY - s.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist < 120 && dist > 0) {
+      s.vx += dx / dist * 0.008;
+      s.vy += dy / dist * 0.008;
     }
 
-    // Interpolate along the polyline up to prog
-    const totalLen = pts.reduce((acc, pt, i) => {
-      if (i === 0) return 0;
-      const dx = pt[0] - pts[i-1][0], dy = pt[1] - pts[i-1][1];
-      return acc + Math.sqrt(dx*dx + dy*dy);
-    }, 0);
+    // Clamp velocity so it stays slow and drifty
+    const speed = Math.sqrt(s.vx * s.vx + s.vy * s.vy);
+    if (speed > 0.05) { s.vx = s.vx / speed * 0.05; s.vy = s.vy / speed * 0.05; }
 
-    const targetLen = totalLen * prog;
-    let drawn = 0;
-    let dStr = `M${pts[0][0]},${pts[0][1]}`;
+    s.x += s.vx;
+    s.y += s.vy;
 
-    for (let i = 1; i < pts.length; i++) {
-      const dx = pts[i][0] - pts[i-1][0];
-      const dy = pts[i][1] - pts[i-1][1];
-      const segLen = Math.sqrt(dx*dx + dy*dy);
-      if (drawn + segLen <= targetLen) {
-        dStr += ` L${pts[i][0]},${pts[i][1]}`;
-        drawn += segLen;
-      } else {
-        const rem = targetLen - drawn;
-        const frac = rem / segLen;
-        dStr += ` L${pts[i-1][0] + dx*frac},${pts[i-1][1] + dy*frac}`;
-        break;
-      }
+    // Repel from starburst center
+    const sr = starburst.getBoundingClientRect();
+    const scx = sr.left + sr.width / 2, scy = sr.top + sr.height / 2;
+    const sdx = s.x - scx, sdy = s.y - scy;
+    const sdist = Math.sqrt(sdx * sdx + sdy * sdy);
+    const exclusion = 120;
+    if (sdist < exclusion && sdist > 0) {
+      const push = (exclusion - sdist) / exclusion * 0.15;
+      s.vx += sdx / sdist * push;
+      s.vy += sdy / sdist * push;
     }
 
-    const path = document.createElementNS(NS, 'path');
-    path.setAttribute('d', dStr);
-    path.setAttribute('fill', 'none');
-    path.setAttribute('stroke', '#888');
-    path.setAttribute('stroke-width', '1');
-    path.setAttribute('pointer-events', 'none');
-    ll.appendChild(path);
+    // Bounce off edges
+    if (s.x - hw < 0)  { s.x = hw;  s.vx = Math.abs(s.vx); }
+    if (s.x + hw > W)  { s.x = W - hw; s.vx = -Math.abs(s.vx); }
+    if (s.y - hh < 0)  { s.y = hh;  s.vy = Math.abs(s.vy); }
+    if (s.y + hh > H)  { s.y = H - hh; s.vy = -Math.abs(s.vy); }
+
+    s.node.style.left = s.x + 'px';
+    s.node.style.top  = s.y + 'px';
   });
 
-  requestAnimationFrame(tick);
-}
-
-// ── Init ───────────────────────────────────────────────────────────────────
-buildNodes();
-
-// Pre-init world positions
-Object.keys(nodes).forEach(id => {
-  const w = worldPos(id);
-  nodes[id]._wx = w.x; nodes[id]._wy = w.y;
-});
-
-requestAnimationFrame(tick);
+  requestAnimationFrame(floatLoop);
+})();
 </script>
+
 </body>
 </html>
