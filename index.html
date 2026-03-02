@@ -32,9 +32,11 @@
     cursor: grab;
     user-select: none;
     touch-action: none;
+    opacity: 0;
   }
 
 .starburst {
+    opacity: 0;
     grid-column: 2;
     grid-row: 2;
     place-self: center;
@@ -57,51 +59,101 @@
     animation: spin 24s linear infinite;
   }
 
-  .image-frame {
-    grid-column: 1;
-    grid-row: 2;
-    place-self: center;
-    transform: translateY(-120px);
-    width: 200px;
-    height: 260px;
-    border: 6px solid #fff;
-    background: #d0d0d0;
+  /* ── Side menu ── */
+  .side-menu {
+    position: fixed;
+    right: 32px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 210px;
+    border-top: 1px dashed #000;
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 800ms ease;
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+  }
+
+  .side-menu-item {
+    border-bottom: 1px dashed #000;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .side-menu-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 4px;
+  }
+
+  .side-menu-symbol {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+  }
+
+  .side-menu-label {
+    flex: 1;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #000;
+  }
+
+  .side-menu-toggle {
+    font-size: 14px;
+    line-height: 1;
+    color: #000;
+    font-weight: 200;
+    transition: transform 0.3s ease;
+  }
+
+  .side-menu-item.open .side-menu-toggle {
+    transform: rotate(45deg);
+  }
+
+  .side-menu-content {
     overflow: hidden;
+    height: 0;
+    transition: height 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
 
-  .image-frame img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
+  .side-menu-content-inner {
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    color: #555;
+    line-height: 1.7;
+    padding: 4px 4px 10px;
   }
 
-  .image-frame-right {
-    grid-column: 3;
-    grid-row: 2;
-    place-self: center;
-    transform: translateY(120px);
-    width: 200px;
-    height: 260px;
-    border: 6px solid #fff;
-    background: #d0d0d0;
-    overflow: hidden;
+  /* ── Contact line overlay ── */
+  .contact-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 5;
   }
 
-  .image-frame-right img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
+  .contact-email-link {
+    position: fixed;
+    pointer-events: auto;
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: #000;
+    text-decoration: none;
+    opacity: 0;
+    transition: opacity 0.5s ease;
   }
+
+  .contact-email-link:hover { text-decoration: underline; }
 
 </style>
 </head>
 <body>
-
-<div class="image-frame">
-  <img src="Project images/goteborg cover image.jpg" alt="Göteborg cover image">
-</div>
 
 <svg class="starburst" width="69" height="82" viewBox="0 0 124 140" xmlns="http://www.w3.org/2000/svg" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
   <path class="starburst-shape" d="M73.714,1.25l23.883,17.352l-11.942,16.436l19.322,6.278l-9.123,28.076l-19.322,-6.278l0,20.316l-29.521,0l0,-20.316l-19.322,6.278l-9.123,-28.076l19.322,-6.278l-11.942,-16.436l23.883,-17.352l11.942,16.436l11.942,-16.436Z" style="fill:#00f;stroke:#000;stroke-width:2.5px;"/>
@@ -124,10 +176,6 @@
   <text x="62" y="124" text-anchor="middle" style="font-family:'Inter', sans-serif;font-weight:300;font-size:32px;fill:#000;">Print</text>
 </svg>
 
-<div class="image-frame-right">
-  <img src="" alt="Portfolio image">
-</div>
-
 <svg class="triangle-widget" id="node-contact" width="46" height="63" viewBox="0 0 124 160" xmlns="http://www.w3.org/2000/svg" style="top:50vh;left:calc(50vw - 220px);fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
   <circle cx="62" cy="47" r="42" style="fill:#ff5f1f;stroke:#ff5f1f;stroke-width:2.5px;"/>
   <text x="62" y="124" text-anchor="middle" style="font-family:'Inter', sans-serif;font-weight:300;font-size:32px;fill:#000;">Contact</text>
@@ -143,37 +191,109 @@
   <text x="62" y="124" text-anchor="middle" style="font-family:'Inter', sans-serif;font-weight:300;font-size:32px;fill:#000;">About</text>
 </svg>
 
+<svg class="contact-overlay" id="contactOverlay"></svg>
+<a class="contact-email-link" id="contactEmail" href="mailto:jack@jkdsgn.com">jack@jkdsgn.com</a>
+
+<div class="side-menu" id="sideMenu">
+
+  <div class="side-menu-item">
+    <div class="side-menu-row">
+      <span class="side-menu-symbol">
+        <svg width="14" height="14" viewBox="0 0 14 14"><circle cx="7" cy="7" r="6" fill="#ff5f1f"/></svg>
+      </span>
+      <span class="side-menu-label">Contact</span>
+      <span class="side-menu-toggle">+</span>
+    </div>
+    <div class="side-menu-content"><div class="side-menu-content-inner">jack@jkdsgn.com</div></div>
+  </div>
+
+  <div class="side-menu-item">
+    <div class="side-menu-row">
+      <span class="side-menu-symbol">
+        <svg width="14" height="14" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5.5" fill="none" stroke="#ff5f1f" stroke-width="1.5"/></svg>
+      </span>
+      <span class="side-menu-label">About</span>
+      <span class="side-menu-toggle">+</span>
+    </div>
+    <div class="side-menu-content"><div class="side-menu-content-inner">Designer, based in North Carolina.<br> <br> Experience in brand, web, and package design with a production background in proofing, printing, and vinyl installation.</div></div>
+  </div>
+
+  <div class="side-menu-item">
+    <div class="side-menu-row">
+      <span class="side-menu-symbol">
+        <svg width="14" height="14" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5.5" fill="none" stroke="#ff5f1f" stroke-width="1.5"/></svg>
+      </span>
+      <span class="side-menu-label">Projects</span>
+      <span class="side-menu-toggle">+</span>
+    </div>
+    <div class="side-menu-content"><div class="side-menu-content-inner">Selected work, 2022–2024</div></div>
+  </div>
+
+</div>
+
 <script>
-// ── Intro: frames grow from 0 at center and expand outward ──
-const frameLeft  = document.querySelector('.image-frame');
-const frameRight = document.querySelector('.image-frame-right');
-const ease = 'cubic-bezier(0.4, 0, 0.2, 1)';
+// ── Side menu accordion ──
+document.querySelectorAll('.side-menu-item').forEach(item => {
+  item.addEventListener('click', () => {
+    const content = item.querySelector('.side-menu-content');
+    const inner   = item.querySelector('.side-menu-content-inner');
+    const isOpen  = item.classList.contains('open');
+    document.querySelectorAll('.side-menu-item').forEach(i => {
+      i.classList.remove('open');
+      i.querySelector('.side-menu-content').style.height = '0';
+    });
+    if (!isOpen) {
+      item.classList.add('open');
+      content.style.height = inner.offsetHeight + 'px';
+    }
+  });
+});
 
-frameLeft.style.transition  = 'none';
-frameRight.style.transition = 'none';
-frameLeft.style.opacity  = '0';
-frameRight.style.opacity = '0';
-frameLeft.style.width    = '0';
-frameRight.style.width   = '0';
-frameLeft.style.height   = '0';
-frameRight.style.height  = '0';
-frameLeft.style.transform  = 'translate(33.33vw, 120px)';
-frameRight.style.transform = 'translate(-33.33vw, -120px)';
+// ── Contact node line ──
+const contactOverlay = document.getElementById('contactOverlay');
+const contactEmail   = document.getElementById('contactEmail');
+let contactOpen = false;
 
-setTimeout(() => {
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    frameLeft.style.transition  = `transform 1.4s ${ease}, width 1.2s ${ease}, height 1.2s ${ease}, opacity 1s ease`;
-    frameRight.style.transition = `transform 1.4s ${ease}, width 1.2s ${ease}, height 1.2s ${ease}, opacity 1s ease`;
-    frameLeft.style.opacity  = '1';
-    frameRight.style.opacity = '1';
-    frameLeft.style.width    = '200px';
-    frameRight.style.width   = '200px';
-    frameLeft.style.height   = '260px';
-    frameRight.style.height  = '260px';
-    frameLeft.style.transform  = 'translateY(-120px)';
-    frameRight.style.transform = 'translateY(120px)';
-  }));
-}, 400);
+function drawContactLine() {
+  const node = document.getElementById('node-contact');
+  const r = node.getBoundingClientRect();
+  // Start: top-left of circle area
+  const sx = r.left + r.width * 0.2;
+  const sy = r.top  + r.height * 0.25;
+
+  // 3-segment path: diagonal up-left, then diagonal up-left again, then horizontal left
+  const seg1x = sx - 25,  seg1y = sy - 20;
+  const seg2x = sx - 50,  seg2y = sy - 38;
+  const ex    = sx - 110, ey    = seg2y;
+
+  const ns = 'http://www.w3.org/2000/svg';
+  contactOverlay.innerHTML = '';
+
+  [[sx, sy, seg1x, seg1y], [seg1x, seg1y, seg2x, seg2y], [seg2x, seg2y, ex, ey]].forEach(([x1,y1,x2,y2]) => {
+    const line = document.createElementNS(ns, 'line');
+    line.setAttribute('x1', x1); line.setAttribute('y1', y1);
+    line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+    line.setAttribute('stroke', '#000');
+    line.setAttribute('stroke-width', '1');
+    line.setAttribute('stroke-linecap', 'round');
+    contactOverlay.appendChild(line);
+  });
+
+  // Email sits above the horizontal segment
+  contactEmail.style.left = (ex) + 'px';
+  contactEmail.style.top  = (ey - 16) + 'px';
+  contactEmail.style.opacity = '1';
+}
+
+function clearContactLine() {
+  contactOverlay.innerHTML = '';
+  contactEmail.style.opacity = '0';
+}
+
+document.getElementById('node-contact').addEventListener('click', () => {
+  contactOpen = !contactOpen;
+  contactOpen ? drawContactLine() : clearContactLine();
+});
 
 // ── Starburst rubber band drag ──
 const starburst = document.querySelector('.starburst');
@@ -210,46 +330,62 @@ function release() {
 starburst.addEventListener('pointerup', release);
 starburst.addEventListener('pointercancel', release);
 
+// ── Intro fade-in sequence ──
+function fadeIn(el, duration) {
+  el.style.transition = `opacity ${duration}ms ease`;
+  el.style.opacity = '1';
+}
+
+// Wave 1: starburst at 300ms
+setTimeout(() => fadeIn(starburst, 1200), 300);
+
+// Wave 2: circle nodes + side menu at 1400ms
+const circleNodes = ['node-contact', 'node-about', 'node-projects'].map(id => document.getElementById(id));
+circleNodes.forEach((el, i) => setTimeout(() => fadeIn(el, 1000), 1400 + i * 200));
+setTimeout(() => { const m = document.getElementById('sideMenu'); m.style.transition = 'opacity 1000ms ease'; m.style.opacity = '1'; }, 1400);
+
+// Wave 3: triangle nodes at 2800ms
+const triangleNodes = ['node-branding', 'node-uiux', 'node-print'].map(id => document.getElementById(id));
+triangleNodes.forEach((el, i) => setTimeout(() => fadeIn(el, 1000), 2800 + i * 200));
+
 // ── Triangle node float + drag ──
-let mouseX = -9999, mouseY = -9999;
-document.addEventListener('pointermove', e => { mouseX = e.clientX; mouseY = e.clientY; });
-
-function randVel() { return (Math.random() * 0.04 - 0.02); }
-
-const floatNodes = [...document.querySelectorAll('.triangle-widget')].map(node => {
-  // Resolve initial calc() position to concrete pixels
+const floatNodes = [...document.querySelectorAll('.triangle-widget')].map((node, i) => {
   const rect = node.getBoundingClientRect();
-  const x = rect.left + rect.width  / 2;
-  const y = rect.top  + rect.height / 2;
-  node.style.left = x + 'px';
-  node.style.top  = y + 'px';
+  const homeX = rect.left + rect.width  / 2;
+  const homeY = rect.top  + rect.height / 2;
+  node.style.left = homeX + 'px';
+  node.style.top  = homeY + 'px';
 
-  const state = { node, x, y, vx: randVel(), vy: randVel(), dragging: false,
-                  pOriginX: 0, pOriginY: 0, nOriginX: 0, nOriginY: 0 };
+  // Unique phase offsets per node so each drifts independently
+  const state = {
+    node, homeX, homeY,
+    phaseX: Math.random() * Math.PI * 2,
+    phaseY: Math.random() * Math.PI * 2,
+    freqX:  0.00018 + Math.random() * 0.00008,
+    freqY:  0.00015 + Math.random() * 0.00008,
+    amp:    8 + Math.random() * 6,
+    dragging: false, dragOffX: 0, dragOffY: 0, dragX: homeX, dragY: homeY
+  };
 
   node.addEventListener('pointerdown', e => {
     state.dragging = true;
-    state.nOriginX = state.x;
-    state.nOriginY = state.y;
-    state.pOriginX = e.clientX;
-    state.pOriginY = e.clientY;
+    state.dragOffX = e.clientX - state.dragX;
+    state.dragOffY = e.clientY - state.dragY;
     node.style.cursor = 'grabbing';
     node.setPointerCapture(e.pointerId);
   });
 
   node.addEventListener('pointermove', e => {
     if (!state.dragging) return;
-    state.x = state.nOriginX + e.clientX - state.pOriginX;
-    state.y = state.nOriginY + e.clientY - state.pOriginY;
-    node.style.left = state.x + 'px';
-    node.style.top  = state.y + 'px';
+    state.dragX = e.clientX - state.dragOffX;
+    state.dragY = e.clientY - state.dragOffY;
+    node.style.left = state.dragX + 'px';
+    node.style.top  = state.dragY + 'px';
   });
 
   const endDrag = () => {
     if (!state.dragging) return;
     state.dragging = false;
-    state.vx = randVel();
-    state.vy = randVel();
     node.style.cursor = '';
   };
   node.addEventListener('pointerup',     endDrag);
@@ -258,54 +394,17 @@ const floatNodes = [...document.querySelectorAll('.triangle-widget')].map(node =
   return state;
 });
 
-(function floatLoop() {
-  const W = window.innerWidth, H = window.innerHeight;
-
+(function floatLoop(t) {
   floatNodes.forEach(s => {
     if (s.dragging) return;
-
-    const hw = s.node.offsetWidth  / 2;
-    const hh = s.node.offsetHeight / 2;
-
-    // Mouse attraction within 120px
-    const dx = mouseX - s.x, dy = mouseY - s.y;
-    const dist = Math.sqrt(dx * dx + dy * dy);
-    if (dist < 120 && dist > 0) {
-      s.vx += dx / dist * 0.008;
-      s.vy += dy / dist * 0.008;
-    }
-
-    // Clamp velocity so it stays slow and drifty
-    const speed = Math.sqrt(s.vx * s.vx + s.vy * s.vy);
-    if (speed > 0.05) { s.vx = s.vx / speed * 0.05; s.vy = s.vy / speed * 0.05; }
-
-    s.x += s.vx;
-    s.y += s.vy;
-
-    // Repel from starburst center
-    const sr = starburst.getBoundingClientRect();
-    const scx = sr.left + sr.width / 2, scy = sr.top + sr.height / 2;
-    const sdx = s.x - scx, sdy = s.y - scy;
-    const sdist = Math.sqrt(sdx * sdx + sdy * sdy);
-    const exclusion = 120;
-    if (sdist < exclusion && sdist > 0) {
-      const push = (exclusion - sdist) / exclusion * 0.15;
-      s.vx += sdx / sdist * push;
-      s.vy += sdy / sdist * push;
-    }
-
-    // Bounce off edges
-    if (s.x - hw < 0)  { s.x = hw;  s.vx = Math.abs(s.vx); }
-    if (s.x + hw > W)  { s.x = W - hw; s.vx = -Math.abs(s.vx); }
-    if (s.y - hh < 0)  { s.y = hh;  s.vy = Math.abs(s.vy); }
-    if (s.y + hh > H)  { s.y = H - hh; s.vy = -Math.abs(s.vy); }
-
-    s.node.style.left = s.x + 'px';
-    s.node.style.top  = s.y + 'px';
+    const x = s.homeX + Math.sin(t * s.freqX + s.phaseX) * s.amp;
+    const y = s.homeY + Math.sin(t * s.freqY + s.phaseY) * s.amp;
+    s.dragX = x; s.dragY = y;
+    s.node.style.left = x + 'px';
+    s.node.style.top  = y + 'px';
   });
-
   requestAnimationFrame(floatLoop);
-})();
+})(performance.now());
 </script>
 
 </body>
